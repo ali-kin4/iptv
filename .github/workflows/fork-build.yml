@@ -1,0 +1,48 @@
+name: fork-build
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'fork/**'
+      - 'scripts/fork/**'
+      - '.github/workflows/fork-build.yml'
+  schedule:
+    - cron: '31 3 * * *'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - name: Validate accepted custom streams
+        env:
+          IPTV_PROBE_RETRIES: '2'
+          IPTV_PROBE_TIMEOUT_MS: '15000'
+        run: node scripts/fork/validate-candidates.mjs fork/accepted.jsonl research/validation-results.jsonl
+      - name: Refuse build when an accepted stream fails
+        run: |
+          node - <<'NODE'
+          const fs = require('fs')
+          const p='research/validation-results.jsonl'
+          const rows=fs.existsSync(p)&&fs.readFileSync(p,'utf8').trim() ? fs.readFileSync(p,'utf8').trim().split(/\r?\n/).map(JSON.parse) : []
+          if(rows.some(x=>!x.pass)) process.exit(1)
+          NODE
+      - run: node scripts/fork/materialize-overlay.mjs fork/accepted.jsonl streams
+      - run: npm run playlist:format
+      - run: npm run playlist:lint
+      - run: npm run playlist:validate -- --log-level=error
+      - run: npm run playlist:generate
+      - name: Deploy generated playlists to this fork only
+        uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
+        with:
+          branch: gh-pages
+          folder: .gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+          clean: true

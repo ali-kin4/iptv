@@ -1,0 +1,101 @@
+{
+  "snapshot": {
+    "upstream_repo": "iptv-org/iptv",
+    "upstream_branch": "master",
+    "upstream_head": "43c6aae8d51430f4a813f43eb81865ce17f3510e",
+    "upstream_head_observed_at_utc": "2026-10-04T01:00:43Z",
+    "api_channels_blob": "0c258f9d7810aafca6604ae113139b041c33af8f",
+    "api_streams_blob": "1ce381a2e2bc2ccfca051ba1a42658b4e61d412f",
+    "api_blocklist_blob": "d9dc3758ced3d697b6e9f4cc012c1da2914eee05"
+  },
+  "totals": {
+    "channels": 31487,
+    "active_channels": 30065,
+    "stream_records": 18139,
+    "blocklist_records": 1440,
+    "active_channels_without_any_stream": 20029
+  },
+  "priority_category_coverage": {
+    "education": 0.249,
+    "science": 0.256,
+    "weather": 0.333,
+    "culture": 0.359,
+    "entertainment": 0.37,
+    "travel": 0.373,
+    "movies": 0.38,
+    "kids": 0.384,
+    "music": 0.4,
+    "documentary": 0.433,
+    "news": 0.443,
+    "series": 0.497
+  },
+  "lowest_coverage_countries_min_20_channels": [
+    {
+      "country": "ZM",
+      "channels": 56,
+      "with_streams": 0,
+      "coverage": 0.0
+    },
+    {
+      "country": "MG",
+      "channels": 49,
+      "with_streams": 0,
+      "coverage": 0.0
+    },
+    {
+      "country": "LR",
+      "channels": 20,
+      "with_streams": 0,
+      "coverage": 0.0
+    },
+    {
+      "country": "UY",
+      "channels": 153,
+      "with_streams": 2,
+      "coverage": 0.013
+    },
+    {
+      "country": "ET",
+      "channels": 107,
+      "with_streams": 3,
+      "coverage": 0.028
+    },
+    {
+      "country": "JP",
+      "channels": 279,
+      "with_streams": 8,
+      "coverage": 0.029
+    },
+    {
+      "country": "SR",
+      "channels": 56,
+      "with_streams": 2,
+      "coverage": 0.036
+    },
+    {
+      "country": "GH",
+      "channels": 218,
+      "with_streams": 10,
+      "coverage": 0.046
+    },
+    {
+      "country": "ZW",
+      "channels": 20,
+      "with_streams": 1,
+      "coverage": 0.05
+    },
+    {
+      "country": "AO",
+      "channels": 52,
+      "with_streams": 3,
+      "coverage": 0.058
+    }
+  ],
+  "search_order": [
+    "official public/municipal/education/weather channels in very low-coverage countries",
+    "official broadcaster families where upstream already contains sibling CDN endpoints",
+    "official FAST channels with stable non-session manifests",
+    "government/parliament/university/public-access channels",
+    "only then broader entertainment/movie/kids candidates with strong authorization evidence"
+  ]
+}

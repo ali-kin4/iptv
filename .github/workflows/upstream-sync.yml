@@ -1,0 +1,42 @@
+name: upstream-sync
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '43 5 * * 1,4'
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Configure git
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Fetch upstream
+        run: |
+          git remote add upstream https://github.com/iptv-org/iptv.git || true
+          git fetch upstream master
+      - name: Build sync branch
+        run: |
+          git checkout -B automation/upstream-sync origin/master
+          git merge --no-edit upstream/master
+          git push --force-with-lease origin automation/upstream-sync
+      - name: Open or reuse PR into this fork
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh pr list --head automation/upstream-sync --base master --state open --json number --jq '.[0].number // empty')
+          if [ -z "$existing" ]; then
+            gh pr create \
+              --base master \
+              --head automation/upstream-sync \
+              --title 'chore: sync upstream iptv-org/iptv' \
+              --body 'Automated upstream synchronization. Review fork-specific workflow changes and resolve any conflicts before merging.'
+          else
+            echo "Sync PR #$existing already open"
+          fi
