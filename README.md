@@ -1,6 +1,6 @@
-# IPTV [![update](https://github.com/iptv-org/iptv/actions/workflows/update.yml/badge.svg)](https://github.com/iptv-org/iptv/actions/workflows/update.yml)
+# IPTV — Ali Jabbary Fork [![fork-build](https://github.com/ali-kin4/iptv/actions/workflows/fork-build.yml/badge.svg)](https://github.com/ali-kin4/iptv/actions/workflows/fork-build.yml)
 
-Collection of publicly available IPTV (Internet Protocol television) channels from all over the world.
+Personal, provenance-first fork of [iptv-org/iptv](https://github.com/iptv-org/iptv), extending its collection of publicly available IPTV (Internet Protocol television) channels while preserving upstream attribution and synchronization.
 
 ## Table of contents
 

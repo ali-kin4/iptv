@@ -1,0 +1,62 @@
+name: research-probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'research/candidates.jsonl'
+      - 'scripts/fork/validate-candidates.mjs'
+      - '.github/workflows/research-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+      - name: Probe held research candidates
+        env:
+          IPTV_ALLOW_UNVERIFIED_RESEARCH: '1'
+          IPTV_PROBE_RETRIES: '2'
+          IPTV_PROBE_TIMEOUT_MS: '15000'
+        run: node scripts/fork/validate-candidates.mjs research/candidates.jsonl research/probe-results.jsonl
+      - name: Build probe summary
+        run: |
+          node - <<'NODE'
+          const fs = require('fs')
+          const p = 'research/probe-results.jsonl'
+          const rows = fs.existsSync(p) && fs.readFileSync(p,'utf8').trim() ? fs.readFileSync(p,'utf8').trim().split(/\r?\n/).map(JSON.parse) : []
+          const lines = [
+            '# Latest Research Probe',
+            '',
+            `Generated: ${new Date().toISOString()}`,
+            '',
+            '| Channel | Pass | Manifest | Final host | Notes |',
+            '| --- | --- | --- | --- | --- |'
+          ]
+          for (const r of rows) {
+            const last = r.attempts?.[r.attempts.length - 1] || {}
+            let host = ''
+            try { host = last.final_url ? new URL(last.final_url).host : '' } catch {}
+            const notes = r.static_issues?.length ? r.static_issues.join(', ') : (last.error || `HTTP ${last.http_status ?? ''}; segment ${last.segment_status ?? ''}`)
+            lines.push(`| ${String(r.channel_id || r.name || '').replaceAll('|','\\|')} | ${r.pass ? '✅' : '❌'} | ${last.manifest_kind || ''} | ${host} | ${String(notes).replaceAll('|','\\|')} |`)
+          }
+          fs.writeFileSync('research/probe-summary.md', lines.join('\n') + '\n')
+          NODE
+      - name: Publish results to automation branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -B automation/research-probe-results
+          git add research/probe-results.jsonl research/probe-summary.md
+          if git diff --cached --quiet; then
+            echo 'No probe result changes.'
+            exit 0
+          fi
+          git commit -m 'chore: update research probe results'
+          git push --force-with-lease origin automation/research-probe-results

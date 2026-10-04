@@ -8,7 +8,7 @@ const ROOT = path.resolve(__dirname, '../..')
 const input = process.argv[2] || path.join(ROOT, 'fork/accepted.jsonl')
 const output = process.argv[3] || path.join(ROOT, 'research/validation-results.jsonl')
 const timeoutMs = Number(process.env.IPTV_PROBE_TIMEOUT_MS || 15000)
-const retries = Math.max(1, Number(process.env.IPTV_PROBE_RETRIES || 2))
+const retries = Math.max(1, Number(process.env.IPTV_PROBE_RETRIES || 2))\nconst allowUnverifiedResearch = process.env.IPTV_ALLOW_UNVERIFIED_RESEARCH === '1'
 
 const TOKEN_KEYS = /(?:^|[?&])(token|auth|signature|sig|hdnts|hdnea|expires?|exp|wmsAuthSign|session|jwt|key)=[^&]+/i
 const CREDENTIAL_PATH = /:\/\/[^/@\s]+:[^/@\s]+@/i
