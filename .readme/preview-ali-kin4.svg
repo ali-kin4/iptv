@@ -13,7 +13,7 @@
     <rect x="152" y="166" width="1123" height="503" rx="8" fill="#e5e5e5" stroke="#d2d2d2"/>
     <text x="197" y="273" fill="#222">URL</text>
     <rect x="257" y="237" width="976" height="52" rx="5" fill="#fff" stroke="#5b9cf4" stroke-width="6"/>
-    <text x="274" y="273" font-size="27" fill="#2a2a2a">https://ali-kin4.github.io/iptv/index.m3u</text>
+    <text x="274" y="273" font-size="21" fill="#2a2a2a">https://raw.githubusercontent.com/ali-kin4/iptv/generated/index.m3u</text>
     <text x="714" y="331" text-anchor="middle" font-size="22" fill="#aaa">To open a usual network stream, enter the URL above.</text>
     <text x="714" y="360" text-anchor="middle" font-size="22" fill="#aaa">Then press Open.</text>
     <rect x="1097" y="816" width="178" height="40" rx="7" fill="#2876e8"/>

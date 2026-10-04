@@ -21,7 +21,7 @@ This design deliberately avoids making `streams/*.m3u` the long-lived source of 
    - `npm run playlist:lint`
    - `npm run playlist:validate -- --log-level=error`
    - `npm run playlist:generate`
-6. The generated public playlists may be deployed to the fork's own `gh-pages` branch.
+6. The generated public playlists are sanitized for obvious tokenized/credential-style URLs and published to the fork's normal `generated` branch. GitHub Pages is not required.
 
 ## Why the upstream update workflow must not be copied blindly
 

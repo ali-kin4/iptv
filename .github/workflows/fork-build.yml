@@ -39,10 +39,19 @@ jobs:
       - run: npm run playlist:lint
       - run: npm run playlist:validate -- --log-level=error
       - run: npm run playlist:generate
-      - name: Deploy generated playlists to this fork only
-        uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
-        with:
-          branch: gh-pages
-          folder: .gh-pages
-          token: ${{ secrets.GITHUB_TOKEN }}
-          clean: true
+      - name: Remove tokenized and credential-style URLs from generated output
+        run: node scripts/fork/sanitize-generated.mjs .gh-pages
+      - name: Publish generated playlists to normal branch
+        run: |
+          set -euo pipefail
+          publish_dir="$(mktemp -d)"
+          cp -a .gh-pages/. "$publish_dir/"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout --orphan generated-publish
+          git rm -rf . >/dev/null 2>&1 || true
+          git clean -fdx
+          cp -a "$publish_dir/." .
+          git add -A
+          git commit -m 'chore: publish generated playlists'
+          git push --force origin HEAD:generated
