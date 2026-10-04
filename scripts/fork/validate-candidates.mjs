@@ -47,7 +47,7 @@ function staticPolicy(record) {
     if (CREDENTIAL_PATH.test(url)) issues.push('embedded_credentials')
     if (XTREAM_PATH.test(url)) issues.push('xtream_style_path')
   }
-  if (!['VERIFIED_OFFICIAL', 'VERIFIED_AUTHORIZED_DISTRIBUTOR'].includes(record.provenance_state)) {
+  if (!allowUnverifiedResearch && !['VERIFIED_OFFICIAL', 'VERIFIED_AUTHORIZED_DISTRIBUTOR'].includes(record.provenance_state)) {
     issues.push('provenance_not_verified')
   }
   return issues
