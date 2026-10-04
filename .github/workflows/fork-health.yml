@@ -1,0 +1,53 @@
+name: fork-health
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'fork/**'
+      - 'scripts/fork/**'
+      - 'research/**'
+      - '.github/workflows/fork-health.yml'
+  schedule:
+    - cron: '17 4 * * *'
+permissions:
+  contents: read
+jobs:
+  validate-overlay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - name: Validate accepted custom streams
+        env:
+          IPTV_PROBE_RETRIES: '2'
+          IPTV_PROBE_TIMEOUT_MS: '15000'
+        run: node scripts/fork/validate-candidates.mjs fork/accepted.jsonl research/validation-results.jsonl
+      - name: Require all accepted streams to pass
+        run: |
+          node - <<'NODE'
+          const fs = require('fs')
+          const p = 'research/validation-results.jsonl'
+          const rows = fs.existsSync(p) ? fs.readFileSync(p,'utf8').trim().split(/\r?\n/).filter(Boolean).map(JSON.parse) : []
+          const bad = rows.filter(r => !r.pass)
+          console.log({checked: rows.length, failed: bad.length})
+          if (bad.length) {
+            console.error(JSON.stringify(bad, null, 2))
+            process.exit(1)
+          }
+          NODE
+      - name: Materialize overlay
+        run: node scripts/fork/materialize-overlay.mjs fork/accepted.jsonl streams
+      - name: Run upstream-format-compatible checks
+        run: |
+          npm run playlist:format
+          npm run playlist:lint
+          npm run playlist:validate -- --log-level=error
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: stream-validation-results
+          path: research/validation-results.jsonl
