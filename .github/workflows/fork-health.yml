@@ -1,6 +1,13 @@
 name: fork-health
 on:
   workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'fork/**'
+      - 'scripts/fork/**'
+      - 'research/**'
+      - '.github/workflows/fork-health.yml'
   pull_request:
     paths:
       - 'fork/**'
