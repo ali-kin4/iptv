@@ -12,7 +12,7 @@ A maintained, provenance-first fork of [iptv-org/iptv](https://github.com/iptv-o
 Use this URL in VLC, Kodi, IPTV players, or any player that supports M3U network playlists:
 
 ```
-https://ali-kin4.github.io/iptv/index.m3u
+https://raw.githubusercontent.com/ali-kin4/iptv/generated/index.m3u
 ```
 
 The original upstream playlist is:
@@ -28,7 +28,7 @@ Other generated playlists are listed in [PLAYLISTS.md](PLAYLISTS.md).
 In VLC:
 
 1. Open **File → Open Network** / **Media → Open Network Stream**.
-2. Paste `https://ali-kin4.github.io/iptv/index.m3u`.
+2. Paste `https://raw.githubusercontent.com/ali-kin4/iptv/generated/index.m3u`.
 3. Press **Open / Play**.
 
 ![VLC Network Panel showing the Ali Jabbary fork playlist URL](.readme/preview-ali-kin4.svg)
@@ -41,7 +41,7 @@ In VLC:
 - **Overlay architecture:** fork-specific accepted streams live in `fork/accepted.jsonl` instead of permanently modifying upstream stream files as the source of truth.
 - **Research ledger:** candidates and rejected/held sources are tracked separately under `research/`.
 - **Automated health checks:** accepted custom streams are revalidated by GitHub Actions.
-- **Fork-only builds:** generated playlists deploy to this fork's own `gh-pages` branch.
+- **Fork-only builds:** generated playlists publish to this fork's normal `generated` branch; GitHub Pages is not required.
 - **Safe upstream sync:** upstream changes are brought in through a reviewable synchronization workflow rather than silently force-updating the default branch.
 
 See [Fork Architecture](docs/fork-architecture.md) and [Provenance Policy](docs/provenance-policy.md) for details.
@@ -50,7 +50,7 @@ See [Fork Architecture](docs/fork-architecture.md) and [Provenance Policy](docs/
 
 The fork tracks [iptv-org/iptv](https://github.com/iptv-org/iptv) as upstream. The synchronization workflow is documented in [docs/upstream-sync.md](docs/upstream-sync.md).
 
-Generated public playlists are rebuilt from the current repository state and deployed to this fork's GitHub Pages output.
+Generated public playlists are rebuilt from the current repository state, sanitized for obvious tokenized/credential-style URLs, and published to the normal `generated` branch for direct raw-file access.
 
 ## 🧪 Adding fork-specific streams
 
